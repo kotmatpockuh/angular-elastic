@@ -167,6 +167,8 @@ angular.module('monospaced.elastic', [])
                 ta.style.height = mirrorHeight + 'px';
               }
 
+              scope.$emit('elastic:finished');
+
               // small delay to prevent an infinite loop
               $timeout(function() {
                 active = false;
@@ -194,18 +196,20 @@ angular.module('monospaced.elastic', [])
 
           $win.bind('resize', forceAdjust);
 
-          scope.$watch(function() {
-            return ngModel.$modelValue;
-          }, function(newValue) {
-            forceAdjust();
-          });
+          if ((angular.isDefined(attrs.watchForMdl) && attrs.watchForMdl == 'true')){
+            scope.$watch(function() {
+              return ngModel.$modelValue;
+            }, function(newValue) {
+              forceAdjust();
+            });
+          }
 
           scope.$on('elastic:adjust', function() {
             initMirror();
             forceAdjust();
           });
 
-          $timeout(adjust, 0, false);
+          $timeout(adjust, 500, false);
 
           /*
            * destroy
